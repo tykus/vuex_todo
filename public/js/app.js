@@ -42823,20 +42823,26 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_1_vuex
                 done: false
             });
         },
-        completeAll: function completeAll(_ref3) {
-            var todos = _ref3.todos;
+        updateTodo: function updateTodo(state, _ref3) {
+            var todo = _ref3.todo,
+                body = _ref3.body;
+
+            todo.body = body;
+        },
+        completeAll: function completeAll(_ref4) {
+            var todos = _ref4.todos;
 
             todos.forEach(function (todo) {
                 return todo.done = true;
             });
         },
-        deleteTodo: function deleteTodo(_ref4, todo) {
-            var todos = _ref4.todos;
+        deleteTodo: function deleteTodo(_ref5, todo) {
+            var todos = _ref5.todos;
 
             todos.splice(todos.indexOf(todo), 1);
         },
-        toggleTodo: function toggleTodo(_ref5, todo) {
-            var todos = _ref5.todos;
+        toggleTodo: function toggleTodo(_ref6, todo) {
+            var todos = _ref6.todos;
 
             todo.done = !todo.done;
         }
@@ -43373,6 +43379,9 @@ module.exports = function normalizeComponent (
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(2);
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+//
 //
 //
 //
@@ -43385,7 +43394,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['todo'],
-    methods: Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapMutations */])(['deleteTodo', 'toggleTodo'])
+    data: function data() {
+        return {
+            body: this.todo.body,
+            editing: false
+        };
+    },
+
+    methods: _extends({}, Object(__WEBPACK_IMPORTED_MODULE_0_vuex__["c" /* mapMutations */])(['deleteTodo', 'toggleTodo']), {
+        updateTodo: function updateTodo(e) {
+            this.$store.commit('updateTodo', {
+                todo: this.todo,
+                body: e.target.value
+            });
+            this.editing = false;
+        }
+    })
 });
 
 /***/ }),
@@ -43410,7 +43434,55 @@ var render = function() {
         }
       }),
       _vm._v(" "),
-      _c("label", { domProps: { textContent: _vm._s(_vm.todo.body) } }),
+      _c("label", {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: !_vm.editing,
+            expression: "! editing"
+          }
+        ],
+        domProps: { textContent: _vm._s(_vm.todo.body) },
+        on: {
+          dblclick: function($event) {
+            _vm.editing = true
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c("input", {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.editing,
+            expression: "editing"
+          },
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.body,
+            expression: "body"
+          }
+        ],
+        attrs: { type: "text" },
+        domProps: { value: _vm.body },
+        on: {
+          keyup: function($event) {
+            if (!("button" in $event) && _vm._k($event.keyCode, "enter", 13)) {
+              return null
+            }
+            _vm.updateTodo($event)
+          },
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.body = $event.target.value
+          }
+        }
+      }),
       _vm._v(" "),
       _c(
         "button",

@@ -23,8 +23,11 @@ export default new Vuex.Store({
                 done: false
             })
         },
+        updateTodo (state, {todo, body}) {
+            todo.body = body
+        },
         completeAll ({ todos }) {
-            todos.forEach(todo => todo.done = true);
+            todos.forEach(todo => todo.done = true)
         },
         deleteTodo ({ todos }, todo) {
             todos.splice(todos.indexOf(todo), 1)
